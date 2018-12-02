@@ -1,21 +1,13 @@
-use std::io::prelude::*;
-
 use std::collections::HashSet;
-use std::fs::File;
-use std::io;
 
-fn main() -> Result<(), io::Error> {
-    let mut input_file = File::open("input.txt")?;
-    let mut input = String::new();
-    input_file.read_to_string(&mut input)?;
+fn main() {
+    let input = include_str!("../input.txt");
 
     let part_one_result = part_one(&input);
     println!("The frequency of part one is {}", part_one_result);
 
     let part_two_result = part_two(&input);
     println!("The frequency of part two is {}", part_two_result);
-
-    Ok(())
 }
 
 fn part_one(input: &str) -> isize {
