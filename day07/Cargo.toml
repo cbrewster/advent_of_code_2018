@@ -1,8 +1,8 @@
 [package]
-name = "day_4"
+name = "day07"
 version = "0.1.0"
 authors = ["Connor Brewster <connor.brewster@eagles.oc.edu>"]
 edition = "2018"
 
 [dependencies]
-chrono = "0.4.6"
+regex = "1.1.0"
