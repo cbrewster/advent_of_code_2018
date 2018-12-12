@@ -72,14 +72,20 @@ impl Node {
     }
 
     fn tree_metadata_sum(&self) -> u32 {
-        self.metadata_sum() + self.children.iter().map(|child| child.tree_metadata_sum()).sum::<u32>()
+        self.metadata_sum()
+            + self
+                .children
+                .iter()
+                .map(|child| child.tree_metadata_sum())
+                .sum::<u32>()
     }
 
     fn value(&self) -> u32 {
         if self.child_count == 0 {
             self.metadata_sum()
         } else {
-            self.metadata.iter()
+            self.metadata
+                .iter()
                 .filter(|entry| **entry > 0)
                 .filter_map(|entry| self.children.get(*entry as usize - 1))
                 .map(|node| node.value())

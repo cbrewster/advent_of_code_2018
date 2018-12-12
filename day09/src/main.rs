@@ -34,7 +34,9 @@ fn main() -> Result<(), Box<Error>> {
 }
 
 fn play_game(player_count: u32, last_marble: u32) -> u32 {
-    let mut players = (1..=player_count).map(|id| Player::new(id)).collect::<Vec<_>>();
+    let mut players = (1..=player_count)
+        .map(|id| Player::new(id))
+        .collect::<Vec<_>>();
     let mut circle = Circle::new(last_marble as usize);
     for (player_id, value) in (0..player_count).cycle().zip(1..=last_marble) {
         if let Some(score) = circle.play_turn(value) {

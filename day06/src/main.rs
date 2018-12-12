@@ -67,14 +67,20 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for x in min_x..=max_x {
         for y in min_y..=max_y {
-            let total_distance: u32 = coordinates.iter().map(|coord| distance(*coord, (x, y))).sum();
+            let total_distance: u32 = coordinates
+                .iter()
+                .map(|coord| distance(*coord, (x, y)))
+                .sum();
             if total_distance < 10000 {
                 area += 1;
             }
         }
     }
 
-    println!("There are {} locations with a total distance to all coordinates of less than 10000", area);
+    println!(
+        "There are {} locations with a total distance to all coordinates of less than 10000",
+        area
+    );
 
     Ok(())
 }

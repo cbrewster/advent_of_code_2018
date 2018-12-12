@@ -31,7 +31,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn parse_input(input: &str) -> Result<Vec<Point>, Box<dyn Error>> {
     let re = Regex::new(r"position=<\s*(?P<pos_x>[-0-9]+),\s*(?P<pos_y>[-0-9]+)> velocity=<\s*(?P<vel_x>[-0-9]+),\s*(?P<vel_y>[-0-9]+)>")?;
 
-    let points = input.split("\n")
+    let points = input
+        .split("\n")
         .map(|line| {
             let captures = match re.captures(line) {
                 Some(captures) => captures,
@@ -45,7 +46,7 @@ fn parse_input(input: &str) -> Result<Vec<Point>, Box<dyn Error>> {
 
             Ok(Point {
                 pos: Position { x: pos_x, y: pos_y },
-                vel: Velocity { x: vel_x, y: vel_y }
+                vel: Velocity { x: vel_x, y: vel_y },
             })
         })
         .collect::<Result<Vec<Point>, Box<Error>>>()?;
@@ -65,21 +66,15 @@ fn part1(mut points: Vec<Point>) {
 }
 
 fn print_sky(points: &[Point], second: u32) {
-    let bounds: Option<(i32, i32, i32, i32)> = points.iter()
-        .fold(None, |bounds, point| {
-            match bounds {
-                Some(bounds) => {
-                    Some((
-                        bounds.0.min(point.pos.x),
-                        bounds.1.max(point.pos.x),
-                        bounds.2.min(point.pos.y),
-                        bounds.3.max(point.pos.y),
-                    ))
-                },
-                None => {
-                    Some((point.pos.x, point.pos.x, point.pos.y, point.pos.y))
-                }
-            }
+    let bounds: Option<(i32, i32, i32, i32)> =
+        points.iter().fold(None, |bounds, point| match bounds {
+            Some(bounds) => Some((
+                bounds.0.min(point.pos.x),
+                bounds.1.max(point.pos.x),
+                bounds.2.min(point.pos.y),
+                bounds.3.max(point.pos.y),
+            )),
+            None => Some((point.pos.x, point.pos.x, point.pos.y, point.pos.y)),
         });
 
     if let Some((min_x, max_x, min_y, max_y)) = bounds {

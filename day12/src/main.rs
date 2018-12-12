@@ -2,7 +2,7 @@ use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 
-type PotId = i32;
+type PotId = i64;
 type Patterns = HashMap<String, bool>;
 type Pots = HashSet<PotId>;
 
@@ -15,43 +15,77 @@ fn main() -> Result<(), Box<Error>> {
         return Err("32 patterns mut be provided!".into());
     }
 
-    // Part 1
-    run(&initial_state, &patterns, 20);
-    // Part 2
-    run(&initial_state, &patterns, 50);
-    run(&initial_state, &patterns, 500);
-    run(&initial_state, &patterns, 5000);
-    run(&initial_state, &patterns, 50000);
-    // Running with 50000000000 generations will take forever,
-    // had to recognize the pattern with smaller inputs.
-    // Result: 2250000000120
+    part1(&initial_state, &patterns);
+    part2(&initial_state, &patterns);
 
     Ok(())
 }
 
-fn run(initial_state: &Pots, patterns: &Patterns, generations: usize) {
-    let mut current_generation: Pots = initial_state.clone();
+fn part1(initial_state: &Pots, patterns: &Patterns) {
+    let sum = compute_final(initial_state, patterns, 20);
+    println!(
+        "The sum of the pot numbers with plants after 20 generations is {}",
+        sum
+    );
+}
 
-    for _ in 0..generations {
+fn part2(initial_state: &Pots, patterns: &Patterns) {
+    let sum = compute_final(initial_state, patterns, 50000000000);
+    println!(
+        "The sum of the pot numbers with plants after 50000000000 generations is {}",
+        sum
+    );
+}
+
+fn compute_final(initial_state: &Pots, patterns: &Patterns, generations: usize) -> i64 {
+    let mut current_generation: Pots = initial_state.clone();
+    let mut last_score = get_score(&current_generation);
+    let mut last_diff = 0;
+    let mut same_diff = 0;
+
+    for generation in 0..generations {
         let min = current_generation.iter().min().cloned().unwrap_or(0) - 5;
         let max = current_generation.iter().max().cloned().unwrap_or(0) + 5;
         current_generation = (min..=max)
             .filter_map(|id| {
-                if patterns.get(&get_pattern(&current_generation, id)).cloned().unwrap_or(false) {
+                if patterns
+                    .get(&get_pattern(&current_generation, id))
+                    .cloned()
+                    .unwrap_or(false)
+                {
                     Some(id)
                 } else {
                     None
                 }
-            }).collect();
-    }
+            })
+            .collect();
 
-    let sum: i32 = current_generation.iter().sum();
-    println!("The sum of the pot numbers with plants after {} generations is {}", generations, sum);
+        let score = get_score(&current_generation);
+        let diff = score - last_score;
+
+        if diff == last_diff {
+            same_diff += 1;
+        } else {
+            same_diff = 0;
+        }
+
+        if same_diff > 5 {
+            return score + diff * (generations - generation + 1) as i64;
+        }
+
+        last_score = score;
+        last_diff = diff;
+    }
+    last_score
+}
+
+fn get_score(pots: &Pots) -> i64 {
+    pots.iter().sum()
 }
 
 fn get_pattern(pots: &Pots, id: PotId) -> String {
     let mut pattern = String::new();
-    for curr in id-2..=id+2 {
+    for curr in id - 2..=id + 2 {
         if pots.contains(&curr) {
             pattern.push('#');
         } else {
@@ -73,14 +107,15 @@ fn parse_initial_state(input: &str) -> Result<Pots, Box<Error>> {
         .chars()
         .enumerate()
         .filter(|(_, c)| *c == '#')
-        .map(|(id, _)| id as i32)
+        .map(|(id, _)| id as i64)
         .collect())
 }
 
 fn parse_patterns(input: &str) -> Result<Patterns, Box<Error>> {
     let re = Regex::new(r"(?P<pattern>[#.]{5}) => (?P<result>[#.])")?;
 
-    Ok(input.split("\n")
+    Ok(input
+        .split("\n")
         .filter_map(|line| re.captures(line))
         .map(|captures| {
             let result = captures["result"] == *"#";

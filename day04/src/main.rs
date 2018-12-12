@@ -49,7 +49,12 @@ impl GuardEntry {
     }
 
     fn best_minute(&self) -> (usize, usize) {
-        self.minutes_asleep.iter().cloned().enumerate().max_by_key(|(_, count)| *count).unwrap()
+        self.minutes_asleep
+            .iter()
+            .cloned()
+            .enumerate()
+            .max_by_key(|(_, count)| *count)
+            .unwrap()
     }
 }
 
@@ -87,13 +92,33 @@ fn main() {
         }
     }
 
-    let best_guard = guards.iter().max_by_key(|(_, guard)| guard.minutes_asleep()).unwrap();
-    println!("Part 1: Best guard: {:?} {:?}", best_guard.0, best_guard.1.minutes_asleep());
+    let best_guard = guards
+        .iter()
+        .max_by_key(|(_, guard)| guard.minutes_asleep())
+        .unwrap();
+    println!(
+        "Part 1: Best guard: {:?} {:?}",
+        best_guard.0,
+        best_guard.1.minutes_asleep()
+    );
     let best_minute = guards.get(&best_guard.0).unwrap().best_minute();
-    println!("Part 1: Best guard x Best Minute = {}", best_guard.0 * best_minute.0);
+    println!(
+        "Part 1: Best guard x Best Minute = {}",
+        best_guard.0 * best_minute.0
+    );
 
-    let best_guard = guards.iter().max_by_key(|(_, guard)| guard.best_minute().1).unwrap();
-    println!("Part 2: Best guard: {:?} {:?}", best_guard.0, best_guard.1.minutes_asleep());
+    let best_guard = guards
+        .iter()
+        .max_by_key(|(_, guard)| guard.best_minute().1)
+        .unwrap();
+    println!(
+        "Part 2: Best guard: {:?} {:?}",
+        best_guard.0,
+        best_guard.1.minutes_asleep()
+    );
     let best_minute = guards.get(&best_guard.0).unwrap().best_minute();
-    println!("Part 2: Best guard x Best Minute = {}", best_guard.0 * best_minute.0);
+    println!(
+        "Part 2: Best guard x Best Minute = {}",
+        best_guard.0 * best_minute.0
+    );
 }

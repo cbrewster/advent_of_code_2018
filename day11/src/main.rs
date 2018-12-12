@@ -53,13 +53,12 @@ impl FuelGrid {
 
         for y in 1..=GRID_HEIGHT {
             for x in 1..=GRID_HEIGHT {
-                sum_grid[y][x] = grid[y - 1][x - 1] + sum_grid[y][x - 1] + sum_grid[y - 1][x] - sum_grid[y - 1][x - 1];
+                sum_grid[y][x] = grid[y - 1][x - 1] + sum_grid[y][x - 1] + sum_grid[y - 1][x]
+                    - sum_grid[y - 1][x - 1];
             }
         }
 
-        FuelGrid {
-            sum_grid,
-        }
+        FuelGrid { sum_grid }
     }
 
     fn find_best_square(&mut self) -> Square {
@@ -78,7 +77,10 @@ impl FuelGrid {
                 }
             }
         }
-        squares.into_iter().max_by_key(|square| square.power_level).expect(&format!("No best square for {}", size))
+        squares
+            .into_iter()
+            .max_by_key(|square| square.power_level)
+            .expect(&format!("No best square for {}", size))
     }
 
     fn get_square(&self, corner: Coordinate, size: usize) -> Option<Square> {
