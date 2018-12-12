@@ -30,7 +30,7 @@ fn part1(initial_state: &Pots, patterns: &Patterns) {
 }
 
 fn part2(initial_state: &Pots, patterns: &Patterns) {
-    let sum = compute_final(initial_state, patterns, 50000000000);
+    let sum = compute_final(initial_state, patterns, 50_000_000_000);
     println!(
         "The sum of the pot numbers with plants after 50000000000 generations is {}",
         sum
@@ -47,16 +47,11 @@ fn compute_final(initial_state: &Pots, patterns: &Patterns, generations: usize) 
         let min = current_generation.iter().min().cloned().unwrap_or(0) - 5;
         let max = current_generation.iter().max().cloned().unwrap_or(0) + 5;
         current_generation = (min..=max)
-            .filter_map(|id| {
-                if patterns
-                    .get(&get_pattern(&current_generation, id))
+            .filter(|id| {
+                patterns
+                    .get(&get_pattern(&current_generation, *id))
                     .cloned()
                     .unwrap_or(false)
-                {
-                    Some(id)
-                } else {
-                    None
-                }
             })
             .collect();
 
@@ -115,7 +110,7 @@ fn parse_patterns(input: &str) -> Result<Patterns, Box<Error>> {
     let re = Regex::new(r"(?P<pattern>[#.]{5}) => (?P<result>[#.])")?;
 
     Ok(input
-        .split("\n")
+        .split('\n')
         .filter_map(|line| re.captures(line))
         .map(|captures| {
             let result = captures["result"] == *"#";
