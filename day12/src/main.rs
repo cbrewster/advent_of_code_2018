@@ -2,9 +2,9 @@ use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 
-type PlantId = i32;
+type PotId = i32;
 type Patterns = HashMap<String, bool>;
-type Plants = HashSet<PlantId>;
+type Pots = HashSet<PotId>;
 
 fn main() -> Result<(), Box<Error>> {
     let input = include_str!("../input.txt").trim();
@@ -29,8 +29,8 @@ fn main() -> Result<(), Box<Error>> {
     Ok(())
 }
 
-fn run(initial_state: &Plants, patterns: &Patterns, generations: usize) {
-    let mut current_generation: Plants = initial_state.clone();
+fn run(initial_state: &Pots, patterns: &Patterns, generations: usize) {
+    let mut current_generation: Pots = initial_state.clone();
 
     for _ in 0..generations {
         let min = current_generation.iter().min().cloned().unwrap_or(0) - 5;
@@ -49,10 +49,10 @@ fn run(initial_state: &Plants, patterns: &Patterns, generations: usize) {
     println!("The sum of the pot numbers with plants after {} generations is {}", generations, sum);
 }
 
-fn get_pattern(plants: &Plants, id: PlantId) -> String {
+fn get_pattern(pots: &Pots, id: PotId) -> String {
     let mut pattern = String::new();
     for curr in id-2..=id+2 {
-        if plants.contains(&curr) {
+        if pots.contains(&curr) {
             pattern.push('#');
         } else {
             pattern.push('.');
@@ -61,7 +61,7 @@ fn get_pattern(plants: &Plants, id: PlantId) -> String {
     pattern
 }
 
-fn parse_initial_state(input: &str) -> Result<Plants, Box<Error>> {
+fn parse_initial_state(input: &str) -> Result<Pots, Box<Error>> {
     let re = Regex::new(r"initial state: (?P<state>[.#]+)")?;
 
     let captures = match re.captures(input) {
